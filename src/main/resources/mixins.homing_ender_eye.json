@@ -1,8 +1,8 @@
 {
   "compatibilityLevel": "JAVA_8",
-  "package": "com.yourname.modid.mixin",
+  "package": "love.marblegate.homing_ender_eye.mixin",
   "mixins": [
-    "MixinMinecraft"
+    "MixinEnderEyeItem"
   ],
   "client": [],
   "server": []
