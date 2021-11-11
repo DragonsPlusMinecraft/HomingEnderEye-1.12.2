@@ -12,12 +12,14 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 @Mixin(ItemEnderEye.class)
@@ -38,10 +40,11 @@ public class MixinEnderEyeItem {
 
     @ModifyArg(method="onItemRightClick",
             at=@At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"), index = 0)
-    public Entity captureEnderEyeBreak(Entity entity){
+    public Entity captureEnderEyeBreak(Entity entity) throws NoSuchFieldException, IllegalAccessException {
         // Pre Handling Ender Eye Break
         if(entity.world instanceof WorldServer && entity.world.provider.getDimension()==0){
-            if(!((EntityEnderEye) entity).shatterOrDrop){
+            boolean shatterOrDrop = ObfuscationReflectionHelper.getPrivateValue(EntityEnderEye.class,(EntityEnderEye) entity,"field_70221_f");
+            if(!shatterOrDrop){
                 EnderEyeDestroyData data = EnderEyeDestroyData.get(entity.world);
 
                 if(Configuration.INDIVIDUAL_MODE){
